@@ -1,0 +1,22 @@
+Running 128 with 100 steps
+Running 256 with 200 steps
+Running 512 with 200 steps
+Running 1024 with 400 steps
+ 
+Batch Job Summary Report for Job "summer-school-serial" (8547870) on daint
+-----------------------------------------------------------------------------------------------------
+             Submit            Eligible               Start                 End    Elapsed  Timelimit 
+------------------- ------------------- ------------------- ------------------- ---------- ---------- 
+2018-07-16T17:27:14 2018-07-16T17:27:14 2018-07-16T17:27:14 2018-07-16T17:40:19   00:13:05   00:15:00 
+-----------------------------------------------------------------------------------------------------
+Username    Account     Partition   NNodes   Energy
+----------  ----------  ----------  ------  --------------
+stud59      std02       normal           1   79.69K joules
+ 
+This job did not utilize any GPUs
+ 
+----------------------------------------------------------
+Scratch File System        Files       Quota
+--------------------  ----------  ----------
+/scratch/snx3000              25     1000000
+ 

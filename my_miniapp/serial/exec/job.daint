@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#SBATCH --job-name="summer-school-serial"
+#SBATCH --nodes=1
+#SBATCH --reservation=course
+#SBATCH --time=00:15:00
+#SBATCH --constraint=gpu
+
+
+for nx in 128 256 512 1024; do
+    nsteps=0
+    if [ $nx == 128 ]; then
+        nsteps=100;
+    elif [ $nx == 256 ]; then
+        nsteps=200;
+    elif [ $nx == 512 ]; then
+        nsteps=200;
+    elif [ $nx == 1024 ]; then
+        nsteps=400;
+    fi;
+
+    echo "Running" $nx "with" $nsteps "steps"
+    srun ../main $nx $nx $nsteps 0.01 > output_"$nx".txt
+
+done;
+
