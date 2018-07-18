@@ -8,7 +8,7 @@ change_env() {
 }
 
 target=gpu
-# target=mc
+target=mc
 
 module load daint-$target
 

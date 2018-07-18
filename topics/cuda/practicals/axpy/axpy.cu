@@ -7,6 +7,34 @@
 // TODO CUDA kernel implementing axpy
 //      y = y + alpha*x
 //void axpy(int n, double alpha, const double* x, double* y)
+template <typename T>
+__global__
+void axpy(int n, double alpha, T* x, T* y){
+        int i = threadIdx.x;
+        y[i] += alpha*x[i];
+    }
+
+template <typename T>
+__global__
+void axpy_nthreads(int n, int nthreads, double alpha, T* x, T* y){
+        // Kernel for fixed number of nthreads, 1 grid
+        int id = threadIdx.x;
+        for (int i = id; i<n; i+=nthreads){
+            y[i] = y[i]+alpha*x[i];
+        }
+}
+
+template <typename T>
+__global__
+void axpy_ngrids(int n, int nthreads, double alpha, T* x, T* y){
+        // Kernel for fixed number of nthreads, and multiple grids
+        // Each threads does exactly 1 addition, if available
+        int i = threadIdx.x + blockIdx.x*blockDim.x;
+        if (i < n) {
+            y[i] = y[i]+alpha*x[i];
+        }
+}
+
 
 int main(int argc, char** argv) {
     size_t pow = read_arg(argc, argv, 1, 16);
@@ -38,6 +66,17 @@ int main(int argc, char** argv) {
 
     start = get_time();
     // TODO launch kernel (alpha=2.0)
+    /* axpy<double><<<1,n>>>(n, 2.0, x_device, y_device); */
+
+    // One thread block
+    /* int nthreads=1024; */
+    /* axpy_nthreads<double><<<1,nthreads>>>(n, nthreads, 2.0, x_device, y_device); */
+
+    // Multiple thread blocks
+    int nthreads = 128;
+    int ngrids = n/128+1;
+    axpy_ngrids<double><<<ngrids,nthreads>>>(n,nthreads,2.0,x_device,y_device);
+
 
     cudaDeviceSynchronize();
     auto time_axpy = get_time() - start;
