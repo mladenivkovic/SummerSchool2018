@@ -29,6 +29,7 @@ struct DiffusionParams {
 };
 
 // TODO : explain what the params variable and setup_params_on_device() do
+// Global variable that is stored on device
 __device__
 DiffusionParams params;
 
