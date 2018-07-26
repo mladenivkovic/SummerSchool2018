@@ -4,11 +4,17 @@ subroutine dotprod_gpu(n, x, y, res)
   real(kind(0d0)), intent(in) :: y(n)
   real(kind(0d0)), intent(out) :: res
 
+  
   res = 0
   ! TODO: Offload this loop to the GPU
-  do i = 1,n
-     res = res + x(i)*y(i)
-  enddo
+  !$acc data copyin(x(:),y(:))
+    !$acc parallel
+      !$acc loop reduction(+:res)
+      do i = 1,n
+         res = res + x(i)*y(i)
+      enddo
+    !$acc end parallel
+  !$acc end data
 
 end subroutine dotprod_gpu
 
@@ -59,10 +65,10 @@ program main
   time_gpu = get_time() - time_gpu
 
   if (abs(expected - result) > 1.e-6) then
-     write(*, '(a e0.6 a e0.6 a)') 'expected ', expected, ' got, ', result, &
+     write(*, '(a e18.6 a e18.6 a)') 'expected ', expected, ' got, ', result, &
           ': failure'
   else
-     write(*, '(a e0.6 a e0.6 a)') 'expected ', expected, ' got, ', result, &
+     write(*, '(a e18.6 a e18.6 a)') 'expected ', expected, ' got, ', result, &
           ': success'
   endif
 

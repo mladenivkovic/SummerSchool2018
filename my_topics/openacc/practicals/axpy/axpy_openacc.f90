@@ -22,9 +22,14 @@ subroutine axpy_gpu(n, alpha, x, y)
   integer i
 
   ! TODO: Offload this loop to the GPU
-  do i = 1,n
-     y(i) = y(i) + alpha*x(i)
-  enddo
+    !$acc data present(x,y)
+    !$acc parallel
+      !$acc loop gang vector
+        do i = 1,n
+           y(i) = y(i) + alpha*x(i)
+        enddo
+    !$acc end parallel
+    !$acc end data
 
 end subroutine axpy_gpu
 
@@ -54,7 +59,7 @@ program main
   time_axpy_omp = get_time() - axpy_start
 
   copyin_start = get_time()
-  ! TODO: Copy data to the GPU
+  !$acc data copyin(x(:)), copy(y(:))
   time_copyin = get_time() - copyin_start
 
   axpy_start = get_time()
@@ -63,6 +68,7 @@ program main
 
   copyout_start = get_time()
   ! TODO: Copy out data from the GPU
+  !$acc end data
   time_copyout = get_time() - copyout_start
 
   print *, '-------'
